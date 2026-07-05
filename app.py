@@ -1,5 +1,29 @@
-import streamlit as st
+
 import sys
+import importlib.util
+from unittest.mock import Mock
+
+# Mock torchvision, tensorflow, and keras to avoid import errors
+class MockModule:
+    __spec__ = None
+
+sys.modules['torchvision'] = MockModule()
+sys.modules['torchvision.transforms'] = MockModule()
+sys.modules['tensorflow'] = MockModule()
+sys.modules['tf_keras'] = MockModule()
+sys.modules['keras'] = MockModule()
+
+# Also patch find_spec just in case
+original_find_spec = importlib.util.find_spec
+
+def patched_find_spec(name, package=None):
+    if name.startswith('torchvision') or name.startswith('tensorflow') or name.startswith('keras') or name.startswith('tf_keras'):
+        return None
+    return original_find_spec(name, package)
+
+importlib.util.find_spec = patched_find_spec
+
+import streamlit as st
 import os
 
 # Add project root to Python path so we can import from src
@@ -47,7 +71,8 @@ def main():
         text_input = st.text_area(
             "Paste your news article here:",
             height=300,
-            placeholder="Type or paste the news article you want to check..."
+            placeholder="Type or paste the news article you want to check...",
+            key="text_input"
         )
         
         col_buttons1, col_buttons2, col_buttons3 = st.columns(3)
@@ -66,20 +91,12 @@ def main():
             announce discovery of a new renewable energy source that could revolutionize the industry 
             and help combat climate change. The technology, which has been in development for over a 
             decade, harnesses energy from previously untapped natural resources with unprecedented efficiency."""
-            st.session_state["text_input"] = example_text
+            st.session_state.text_input = example_text
             st.rerun()
         
         if clear_btn:
-            st.session_state["text_input"] = ""
+            st.session_state.text_input = ""
             st.rerun()
-        
-        if "text_input" in st.session_state:
-            text_input = st.text_area(
-                "Paste your news article here:",
-                value=st.session_state["text_input"],
-                height=300,
-                key="text_area_2"
-            )
         
         if predict_btn:
             if text_input.strip():

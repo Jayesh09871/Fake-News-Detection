@@ -31,10 +31,11 @@ def clean_text(text):
     if text is None:
         return ""
     text = str(text)
+    # Remove URLs and HTML only, keep all other punctuation for better predictions
     text = re.sub(r'http\S+', '', text)
     text = re.sub(r'www\S+', '', text)
     text = re.sub(r'<.*?>', '', text)
-    text = re.sub(r'[^a-zA-Z0-9\s]', '', text)
+    # Fix whitespace
     text = re.sub(r'\s+', ' ', text).strip()
     return text
 
@@ -79,9 +80,9 @@ if __name__ == "__main__":
     predictor = FakeNewsPredictor()
     
     test_texts = [
-        "President announces new infrastructure bill that will invest $2 trillion in roads, bridges, and broadband internet across the country. The bill, which has bipartisan support in Congress, aims to create millions of jobs and modernize the nation's aging infrastructure over the next decade. Key provisions include funding for electric vehicle charging stations, renewable energy projects, and improvements to public transit systems in major cities.",
-        "Breaking: Scientists discover cure for cancer in major breakthrough.",
-        "Moon landing was a hoax filmed in a Hollywood studio.",
+        "The White House announced today that President Biden has signed a historic infrastructure bill into law The 12 trillion package includes funding for roads bridges broadband internet and clean energy projects across the nation In a speech at the Capitol Biden stated that this legislation will create millions of goodpaying jobs and modernize Americas infrastructure for the 21st century The bill passed with bipartisan support in both the House and Senate",
+        "The White House announced today that President Biden has signed a historic infrastructure bill into law. The $1.2 trillion package includes funding for roads, bridges, broadband internet, and clean energy projects across the nation.",
+        "Aliens have landed in New York City and are demanding that all humans surrender immediately! The government is covering up the truth, but our sources inside the Pentagon have confirmed that extraterrestrial spacecraft have been spotted hovering over the Statue of Liberty. This is definitely real news and not a hoax at all!",
     ]
     
     for text in test_texts:
