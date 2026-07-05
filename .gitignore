@@ -28,4 +28,5 @@ models/
 *.swp
 *.swo
 *~
+.DS_Store
 

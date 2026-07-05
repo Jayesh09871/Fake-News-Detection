@@ -16,6 +16,7 @@ This project uses a fine-tuned **DistilBERT** model to classify news articles as
 - **Evaluation Metrics**: Accuracy, Precision, Recall, F1 Score, Confusion Matrix
 - **User Interface**: Modern, clean Streamlit app
 - **Production-Ready**: Modular, well-documented code
+- **Google Colab Training Guide**: Easy GPU training support
 
 ## Dataset
 
@@ -29,7 +30,7 @@ Both files include columns like:
 - `subject`: Category/subject
 - `date`: Publication date
 
-## Installation
+## Installation (Local)
 
 1. Clone the repository (or use this project directory):
 ```bash
@@ -48,37 +49,53 @@ venv\Scripts\activate     # On Windows
 pip install -r requirements.txt
 ```
 
-## How to Train
+## How to Train (Google Colab - Recommended)
+To train on GPU (much faster):
+1. Push this entire project to GitHub
+2. Open Google Colab at https://colab.research.google.com
+3. Connect to a GPU runtime (Runtime -> Change runtime type -> Hardware accelerator: GPU)
+4. Create a new notebook and run these cells in order:
+```python
+!mkdir -p DATASET models
 
-1. Make sure your dataset is in the `DATASET/` folder:
-   - `DATASET/Fake.csv`
-   - `DATASET/True.csv`
+# Clone your repo (replace with your actual URL)
+!git clone https://github.com/YourUsername/YourRepoName.git
+%cd YourRepoName
 
-2. Run the training script:
-```bash
-python -m src.train
+# Install dependencies with specific versions
+!pip uninstall -y transformers
+!pip install transformers==4.46.3 accelerate evaluate datasets
+
+# Upload Fake.csv and True.csv to Colab, then move to DATASET/
+!mv Fake.csv DATASET/
+!mv True.csv DATASET/
+
+# Train the model
+!TRANSFORMERS_NO_TF=1 python -m src.train
+
+# Zip and download the model
+!zip -r models.zip models/
+from google.colab import files
+files.download('models.zip')
 ```
-
-This will:
-- Load and preprocess the data
-- Split into train/validation/test sets
-- Fine-tune DistilBERT
-- Evaluate the model
-- Save the trained model to `models/fake-news-detector/`
+After training, extract `models.zip` on your local machine and place the `models/` folder in your project root!
 
 ## How to Run the Streamlit App
-
-1. First, make sure you've trained the model (or have a pre-trained model in `models/fake-news-detector/`)
-
+1. Make sure you have the trained model in `models/fake-news-detector/` (from Colab or local training)
 2. Run the Streamlit app:
 ```bash
 streamlit run app.py
 ```
+3. Open your browser and go to http://localhost:8501
 
-3. Open your browser and go to the URL shown (typically `http://localhost:8501`)
+## Testing the Application
+Test with multiple inputs:
+- Real news articles
+- Fake news articles
+- Empty inputs
+- Long articles (over 512 tokens - model will automatically truncate)
 
 ## Model Architecture
-
 - **Base Model**: `distilbert-base-uncased`
 - **Type**: Sequence Classification
 - **Number of Labels**: 2 (Fake = 0, Real = 1)
@@ -89,16 +106,13 @@ streamlit run app.py
 - **Epochs**: 3
 
 ## Evaluation Metrics
-
 The model is evaluated using:
 - **Accuracy**: Overall correctness
 - **Precision**: Minimizing false positives
 - **Recall**: Minimizing false negatives
 - **F1 Score**: Harmonic mean of precision and recall
-- **Confusion Matrix**: Visual representation of predictions
 
 ## Project Structure
-
 ```
 Fake-News-Detection/
 ├── DATASET/
@@ -120,7 +134,6 @@ Fake-News-Detection/
 ```
 
 ## Future Improvements
-
 - [ ] Add more data augmentation techniques
 - [ ] Try other pre-trained models (BERT, RoBERTa, etc.)
 - [ ] Implement early stopping
@@ -131,11 +144,9 @@ Fake-News-Detection/
 - [ ] Support multiple languages
 
 ## License
-
 MIT License
 
 ## Acknowledgments
-
 - Hugging Face for Transformers library
 - Kaggle for the dataset
 - Streamlit for the amazing web framework

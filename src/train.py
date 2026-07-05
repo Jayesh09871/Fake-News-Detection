@@ -1,28 +1,7 @@
 import sys
-import importlib.util
-from unittest.mock import Mock
-
-# Mock torchvision, tensorflow, and keras to avoid import errors
-class MockModule:
-    __spec__ = None
-
-sys.modules['torchvision'] = MockModule()
-sys.modules['torchvision.transforms'] = MockModule()
-sys.modules['tensorflow'] = MockModule()
-sys.modules['tf_keras'] = MockModule()
-sys.modules['keras'] = MockModule()
-
-# Also patch find_spec just in case
-original_find_spec = importlib.util.find_spec
-
-def patched_find_spec(name, package=None):
-    if name.startswith('torchvision') or name.startswith('tensorflow') or name.startswith('keras') or name.startswith('tf_keras'):
-        return None
-    return original_find_spec(name, package)
-
-importlib.util.find_spec = patched_find_spec
-
 import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import numpy as np
 from datasets import Dataset
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
@@ -76,7 +55,7 @@ def main():
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     
     def tokenize_function(examples):
-        return tokenizer(examples["text"], truncation=True, max_length=512)
+        return tokenizer(examples["text"], truncation=True, max_length=256)
     
     train_dataset = Dataset.from_pandas(train_df)
     val_dataset = Dataset.from_pandas(val_df)
@@ -97,7 +76,7 @@ def main():
         learning_rate=2e-5,
         per_device_train_batch_size=16,
         per_device_eval_batch_size=16,
-        num_train_epochs=3,
+        num_train_epochs=2,
         weight_decay=0.01,
         eval_strategy="epoch",
         save_strategy="epoch",
@@ -105,6 +84,7 @@ def main():
         logging_dir="./models/logs",
         logging_steps=100,
         report_to="none",  # Disable all reporting to avoid TensorBoard issues
+        fp16=True,  # Enable mixed precision for faster training on T4
     )
     
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
@@ -135,4 +115,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

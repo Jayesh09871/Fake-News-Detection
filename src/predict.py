@@ -54,7 +54,7 @@ class FakeNewsPredictor:
             cleaned_text,
             return_tensors="pt",
             truncation=True,
-            max_length=512,
+            max_length=256,
             padding=True
         )
         inputs = {k: v.to(self.device) for k, v in inputs.items()}
@@ -79,6 +79,7 @@ if __name__ == "__main__":
     predictor = FakeNewsPredictor()
     
     test_texts = [
+        "President announces new infrastructure bill that will invest $2 trillion in roads, bridges, and broadband internet across the country. The bill, which has bipartisan support in Congress, aims to create millions of jobs and modernize the nation's aging infrastructure over the next decade. Key provisions include funding for electric vehicle charging stations, renewable energy projects, and improvements to public transit systems in major cities.",
         "Breaking: Scientists discover cure for cancer in major breakthrough.",
         "Moon landing was a hoax filmed in a Hollywood studio.",
     ]
@@ -87,4 +88,3 @@ if __name__ == "__main__":
         result = predictor.predict(text)
         print(f"\nText: {text[:100]}...")
         print(f"Prediction: {result['label']} (Confidence: {result['confidence']}%)")
-
