@@ -1,4 +1,3 @@
-
 import sys
 import importlib.util
 from unittest.mock import Mock
@@ -64,17 +63,16 @@ def main():
         st.info("Make sure you have trained the model and placed it in ./models/fake-news-detector/")
         return
     
+    # Initialize session state BEFORE creating widgets
+    if "text_content" not in st.session_state:
+        st.session_state.text_content = ""
+    
     col1, col2 = st.columns([2, 1])
     
     with col1:
         st.subheader("Enter News Article")
-        text_input = st.text_area(
-            "Paste your news article here:",
-            height=300,
-            placeholder="Type or paste the news article you want to check...",
-            key="text_input"
-        )
         
+        # Buttons FIRST
         col_buttons1, col_buttons2, col_buttons3 = st.columns(3)
         
         with col_buttons1:
@@ -86,17 +84,27 @@ def main():
         with col_buttons3:
             clear_btn = st.button("🗑️ Clear", use_container_width=True)
         
+        # Handle button presses BEFORE creating the text area
         if example_btn:
             example_text = """Breaking: Major scientific breakthrough as researchers at leading university 
             announce discovery of a new renewable energy source that could revolutionize the industry 
             and help combat climate change. The technology, which has been in development for over a 
             decade, harnesses energy from previously untapped natural resources with unprecedented efficiency."""
-            st.session_state.text_input = example_text
+            st.session_state.text_content = example_text
             st.rerun()
         
         if clear_btn:
-            st.session_state.text_input = ""
+            st.session_state.text_content = ""
             st.rerun()
+        
+        # NOW create the text area widget
+        text_input = st.text_area(
+            "Paste your news article here:",
+            value=st.session_state.text_content,
+            height=300,
+            placeholder="Type or paste the news article you want to check...",
+            key="text_content"
+        )
         
         if predict_btn:
             if text_input.strip():
