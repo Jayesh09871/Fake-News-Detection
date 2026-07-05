@@ -41,10 +41,10 @@ def clean_text(text):
 
 
 class FakeNewsPredictor:
-    def __init__(self, model_path="./models/fake-news-detector"):
+    def __init__(self, repo_id="Jayesh0987/fake-news-detector"):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
-        self.model = AutoModelForSequenceClassification.from_pretrained(model_path)
+        self.tokenizer = AutoTokenizer.from_pretrained(repo_id)
+        self.model = AutoModelForSequenceClassification.from_pretrained(repo_id)
         self.model.to(self.device)
         self.model.eval()
     
