@@ -1,4 +1,27 @@
 import sys
+import importlib.util
+from unittest.mock import Mock
+
+# Mock torchvision, tensorflow, and keras to avoid import errors
+class MockModule:
+    __spec__ = None
+
+sys.modules['torchvision'] = MockModule()
+sys.modules['torchvision.transforms'] = MockModule()
+sys.modules['tensorflow'] = MockModule()
+sys.modules['tf_keras'] = MockModule()
+sys.modules['keras'] = MockModule()
+
+# Also patch find_spec just in case
+original_find_spec = importlib.util.find_spec
+
+def patched_find_spec(name, package=None):
+    if name.startswith('torchvision') or name.startswith('tensorflow') or name.startswith('keras') or name.startswith('tf_keras'):
+        return None
+    return original_find_spec(name, package)
+
+importlib.util.find_spec = patched_find_spec
+
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
