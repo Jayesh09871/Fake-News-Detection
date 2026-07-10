@@ -94,12 +94,12 @@ The model was evaluated using:
 5. **Efficient Training**: Supports GPU acceleration via Google Colab
 
 ## 8. Deployment
-- **Model Hosting**: Hugging Face Hub (Repository: `Jayesh0987/fake-news-detector`)
-- **Web App**: Deployed on Streamlit Community Cloud
+- **Model Hosting**: Hugging Face Hub
+- **Web App**: Deployed on Streamlit Community Cloud (URL: [https://fake-news-detection-tmpzetr4e5luvd745zapoh.streamlit.app/](https://fake-news-detection-tmpzetr4e5luvd745zapoh.streamlit.app/))
 - **Python Version**: 3.12 (locked for compatibility)
 
 ## 9. GitHub Repository
-**Link:** [Add your GitHub repository URL here]
+**Link:** [https://github.com/Jayesh09871/Fake-News-Detection](https://github.com/Jayesh09871/Fake-News-Detection)
 
 ## 10. Future Enhancements
 - Add data augmentation techniques
