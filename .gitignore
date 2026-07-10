@@ -35,3 +35,4 @@ test_clean_text.py
 test_both_versions.py
 test_with_training_clean.py
 upload_to_hf.py
+PROJECT_REPORT.md
